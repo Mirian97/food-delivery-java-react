@@ -10,4 +10,6 @@ import com.quispe.food_delivery.product.entity.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByActiveTrue(Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveTrue(String name, String description, Pageable pageable);
 }

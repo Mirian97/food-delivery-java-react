@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.quispe.food_delivery.product.dto.ProductRequestDto;
@@ -32,8 +33,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> findAll(
-            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<ProductResponseDto> products = productService.findAll(pageable);
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(required = false) String search) {
+        Page<ProductResponseDto> products = productService.findAll(pageable, search);
         return ResponseEntity.ok(products);
     }
 

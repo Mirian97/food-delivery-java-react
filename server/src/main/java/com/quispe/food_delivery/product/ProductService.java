@@ -23,14 +23,21 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> findAll(Pageable pageable) {
+    public Page<ProductResponseDto> findAll(Pageable pageable, String search) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
 
-        Page<Product> products = isAdmin
-                ? productRepository.findAll(pageable)
-                : productRepository.findAllByActiveTrue(pageable);
+        Page<Product> products;
+        if (search == null || search.isBlank()) {
+            products = isAdmin
+                    ? productRepository.findAll(pageable)
+                    : productRepository.findAllByActiveTrue(pageable);
+        } else if (isAdmin) {
+            products = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, pageable);
+        } else {
+            products = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveTrue(search, search, pageable);
+        }
 
         return products.map(productMapper::toResponse);
     }

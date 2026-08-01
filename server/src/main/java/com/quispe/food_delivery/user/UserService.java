@@ -55,9 +55,16 @@ public class UserService {
         return userMapper.toResponse(updatedUser);
     }
 
-    public List<UserResponseDto> findAll() {
-        return userRepository.findAll()
-                .stream()
+    public List<UserResponseDto> findAll(String search) {
+        List<User> users;
+
+        if (search == null || search.isBlank()) {
+            users = userRepository.findAll();
+        } else {
+            users = userRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search);
+        }
+
+        return users.stream()
                 .map(userMapper::toResponse)
                 .toList();
     }

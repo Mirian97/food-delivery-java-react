@@ -1,3 +1,16 @@
+import { apiErrorMessage } from '#/api'
+import { productService } from '#/api/services/product.service'
+import { formatCurrency } from '#/common/helpers/format-currency.helper'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { EmptyState } from '@/components/empty-state'
+import { ErrorMessage } from '@/components/error-message'
+import { Loading } from '@/components/loading'
+import { PageHeader } from '@/components/page-header'
+import { ProductCard } from '@/components/product-card'
+import { useAuth } from '@/contexts/auth-context'
+import { useCart } from '@/contexts/cart-context'
+import { useToast } from '@/contexts/toast-context'
+import type { Product } from '@/types'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
@@ -19,21 +32,7 @@ import type { GridColDef } from '@mui/x-data-grid'
 import { DataGrid } from '@mui/x-data-grid'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
-
-import { apiErrorMessage } from '#/api'
-import { productService } from '#/api/services/product.service'
-import { formatCurrency } from '#/common/helpers/format-currency.helper'
-import { ConfirmDialog } from '@/components/confirm-dialog'
-import { EmptyState } from '@/components/empty-state'
-import { ErrorMessage } from '@/components/error-message'
-import { Loading } from '@/components/loading'
-import { PageHeader } from '@/components/page-header'
-import { ProductCard } from '@/components/product-card'
-import { useAuth } from '@/contexts/auth-context'
-import { useCart } from '@/contexts/cart-context'
-import { useToast } from '@/contexts/toast-context'
-import type { Product } from '@/types'
+import { useEffect, useMemo, useState } from 'react'
 
 export function ProductListPage() {
   const { isAdmin } = useAuth()
@@ -45,11 +44,28 @@ export function ProductListPage() {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [toDelete, setToDelete] = useState<Product | null>(null)
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim())
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [search])
+
   const query = useQuery({
-    queryKey: ['products', { page, size: pageSize }],
-    queryFn: () => productService.list({ page, size: pageSize }),
+    queryKey: [
+      'products',
+      { page, size: pageSize, search: debouncedSearch || undefined },
+    ],
+    queryFn: () =>
+      productService.list({
+        page,
+        size: pageSize,
+        search: debouncedSearch || undefined,
+      }),
   })
 
   const removeMutation = useMutation({
@@ -62,16 +78,7 @@ export function ProductListPage() {
     onError: (error) => toast.error(apiErrorMessage(error)),
   })
 
-  const rows = useMemo(() => {
-    const content = query.data?.content ?? []
-    const term = search.trim().toLowerCase()
-    if (!term) return content
-    return content.filter(
-      (p) =>
-        p.name.toLowerCase().includes(term) ||
-        p.description.toLowerCase().includes(term),
-    )
-  }, [query.data, search])
+  const rows = useMemo(() => query.data?.content ?? [], [query.data])
 
   const columns: GridColDef<Product>[] = [
     { field: 'name', headerName: 'Produto', flex: 1, minWidth: 160 },
@@ -165,7 +172,10 @@ export function ProductListPage() {
       <TextField
         placeholder="Buscar produtos..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value)
+          setPage(0)
+        }}
         sx={{ mb: 3, maxWidth: 320, width: '100%' }}
         size="small"
         slotProps={{

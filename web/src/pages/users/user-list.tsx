@@ -1,21 +1,3 @@
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined'
-import SearchIcon from '@mui/icons-material/Search'
-import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import Chip from '@mui/material/Chip'
-import InputAdornment from '@mui/material/InputAdornment'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
-import MenuItem from '@mui/material/MenuItem'
-import Typography from '@mui/material/Typography'
-import type { GridColDef } from '@mui/x-data-grid'
-import { DataGrid } from '@mui/x-data-grid'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
-
 import { apiErrorMessage } from '#/api'
 import { userService } from '#/api/services/user.service'
 import { EmptyState } from '@/components/empty-state'
@@ -23,27 +5,43 @@ import { ErrorMessage } from '@/components/error-message'
 import { Loading } from '@/components/loading'
 import { PageHeader } from '@/components/page-header'
 import type { Role, User } from '@/types'
+import SearchIcon from '@mui/icons-material/Search'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Chip from '@mui/material/Chip'
+import InputAdornment from '@mui/material/InputAdornment'
+import MenuItem from '@mui/material/MenuItem'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import type { GridColDef } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
 
 export function UserListPage() {
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<'ALL' | Role>('ALL')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim())
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [search])
+
   const query = useQuery({
-    queryKey: ['users'],
-    queryFn: () => userService.list(),
+    queryKey: ['users', debouncedSearch || undefined],
+    queryFn: () => userService.list({ search: debouncedSearch || undefined }),
   })
   const users = query.data ?? []
 
   const filteredUsers = useMemo(() => {
-    const term = search.trim().toLowerCase()
-    return users.filter((u) => {
-      const matchesSearch =
-        !term ||
-        u.name.toLowerCase().includes(term) ||
-        u.email.toLowerCase().includes(term)
-      const matchesRole = roleFilter === 'ALL' || u.role === roleFilter
-      return matchesSearch && matchesRole
-    })
-  }, [users, search, roleFilter])
+    return users.filter((u) => roleFilter === 'ALL' || u.role === roleFilter)
+  }, [users, roleFilter])
 
   const columns: GridColDef<User>[] = [
     {
@@ -123,7 +121,7 @@ export function UserListPage() {
           placeholder="Buscar por nome ou e-mail..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          sx={{ maxWidth: 360, width: '100%' }}
+          sx={{ maxWidth: 320, width: '100%' }}
           size="small"
           slotProps={{
             input: {
