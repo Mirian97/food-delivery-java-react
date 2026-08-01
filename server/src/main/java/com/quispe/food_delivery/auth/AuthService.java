@@ -15,6 +15,7 @@ import com.quispe.food_delivery.common.exception.ResourceNotFoundException;
 import com.quispe.food_delivery.security.JwtService;
 import com.quispe.food_delivery.user.UserRepository;
 import com.quispe.food_delivery.user.dto.UserResponseDto;
+import com.quispe.food_delivery.user.entity.Role;
 import com.quispe.food_delivery.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class AuthService {
         }
 
         User user = authMapper.toUserEntity(request);
+        user.setRole(Role.CUSTOMER);
         user.setPassword(passwordEncoder.encode(request.password()));
 
         User savedUser = userRepository.save(user);

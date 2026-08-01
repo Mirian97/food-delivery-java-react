@@ -30,7 +30,7 @@ export function ConfirmDialog({
       onClose={onClose}
       maxWidth="xs"
       fullWidth
-      slotProps={{ paper: { sx: { borderRadius: 4, p: 1 } } }}
+      slotProps={{ paper: { sx: { borderRadius: 1.5, p: 1 } } }}
     >
       <DialogTitle sx={{ fontWeight: 700 }}>{title}</DialogTitle>
       <DialogContent>

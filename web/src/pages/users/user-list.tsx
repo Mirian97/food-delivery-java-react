@@ -1,5 +1,6 @@
 import { apiErrorMessage } from '#/api'
 import { userService } from '#/api/services/user.service'
+import { getUserRole } from '#/common/helpers/get-user-role.helper'
 import { EmptyState } from '@/components/empty-state'
 import { ErrorMessage } from '@/components/error-message'
 import { Loading } from '@/components/loading'
@@ -94,7 +95,7 @@ export function UserListPage() {
         return (
           <Chip
             size="small"
-            label={isAdmin ? 'Administrador' : 'Cliente'}
+            label={getUserRole(params.value)}
             sx={{
               fontWeight: 600,
               bgcolor: isAdmin ? '#E8EAF6' : '#E8F5E9',

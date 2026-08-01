@@ -8,9 +8,9 @@ import {
   useState,
 } from 'react'
 
-import type { AuthUser, Role } from '#/types'
 import { TOKEN_KEY, USER_KEY } from '#/api'
 import { authService } from '#/api/services/auth.service'
+import type { AuthUser } from '#/types'
 
 interface AuthContextValue {
   user: AuthUser | null
@@ -23,7 +23,6 @@ interface AuthContextValue {
     name: string
     email: string
     password: string
-    role: Role
   }) => Promise<void>
   logout: () => void
 }
@@ -67,12 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const register = useCallback(
-    async (data: {
-      name: string
-      email: string
-      password: string
-      role: Role
-    }) => {
+    async (data: { name: string; email: string; password: string }) => {
       await authService.register(data)
     },
     [],

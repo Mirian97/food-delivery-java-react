@@ -1,3 +1,7 @@
+import { formatCurrency } from '#/common/helpers/format-currency.helper'
+import { formatDateTime } from '#/common/helpers/format-datetime.helper'
+import type { Order } from '#/types'
+import { StatusChip } from '@/components/status-chip'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
 import Button from '@mui/material/Button'
@@ -7,10 +11,6 @@ import Divider from '@mui/material/Divider'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from '@tanstack/react-router'
-import { formatCurrency } from '#/common/helpers/format-currency.helper'
-import { formatDateTime } from '#/common/helpers/format-datetime.helper'
-import type { Order } from '#/types'
-import { StatusChip } from '@/components/status-chip'
 
 export function OrderCard({ order }: { order: Order }) {
   const navigate = useNavigate()
@@ -46,7 +46,7 @@ export function OrderCard({ order }: { order: Order }) {
           ) : null}
           <Typography variant="body2" color="text.secondary">
             {formatDateTime(order.createdAt)} · {order.items.length || 0}{' '}
-            item(ns)
+            {order.items.length === 1 ? 'item' : 'itens'}
           </Typography>
         </Stack>
         <Stack

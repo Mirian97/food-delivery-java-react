@@ -1,3 +1,7 @@
+import { getUserRole } from '#/common/helpers/get-user-role.helper'
+import { Logo } from '@/components/logo'
+import { useAuth } from '@/contexts/auth-context'
+import { useCart } from '@/contexts/cart-context'
 import LogoutIcon from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlineOutlined'
@@ -10,16 +14,12 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Tooltip from '@mui/material/Tooltip'
 import Toolbar from '@mui/material/Toolbar'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Logo } from '@/components/logo'
-import { useAuth } from '@/contexts/auth-context'
-import { useCart } from '@/contexts/cart-context'
-import { useQueryClient } from '@tanstack/react-query'
-import { getUserRole } from '#/common/helpers/get-user-role.helper'
 
 export function Navbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
   const { user, isAuthenticated, logout } = useAuth()
@@ -83,7 +83,7 @@ export function Navbar({ onOpenSidebar }: { onOpenSidebar?: () => void }) {
               <Typography
                 variant="caption"
                 color="primary"
-                sx={{ fontWeight: 700, textTransform: 'uppercase' }}
+                sx={{ fontWeight: 700 }}
               >
                 {getUserRole(user?.role)}
               </Typography>

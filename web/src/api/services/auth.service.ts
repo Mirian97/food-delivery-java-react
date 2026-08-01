@@ -1,4 +1,4 @@
-import type { LoginResponse, RegisterResponse, Role } from '#/types'
+import type { LoginResponse, RegisterResponse } from '#/types'
 import { api } from '..'
 
 class AuthService {
@@ -20,7 +20,6 @@ class AuthService {
     name: string
     email: string
     password: string
-    role: Role
   }): Promise<RegisterResponse> {
     const { data } = await api.post<RegisterResponse>(
       `${this.basePath}/register`,

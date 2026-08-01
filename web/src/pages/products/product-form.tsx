@@ -1,3 +1,9 @@
+import { apiErrorMessage } from '#/api'
+import { productService } from '#/api/services/product.service'
+import { ErrorMessage } from '@/components/error-message'
+import { Loading } from '@/components/loading'
+import { PageHeader } from '@/components/page-header'
+import { useToast } from '@/contexts/toast-context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import Box from '@mui/material/Box'
@@ -13,12 +19,6 @@ import { useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { apiErrorMessage } from '#/api'
-import { productService } from '#/api/services/product.service'
-import { ErrorMessage } from '@/components/error-message'
-import { Loading } from '@/components/loading'
-import { PageHeader } from '@/components/page-header'
-import { useToast } from '@/contexts/toast-context'
 
 const schema = z.object({
   name: z.string().min(2, 'Informe o nome do produto'),
@@ -102,7 +102,7 @@ export function ProductFormPage({ productId }: { productId?: string }) {
         />
       ) : (
         <Card sx={{ maxWidth: 640 }}>
-          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
             <Box
               component="form"
               onSubmit={handleSubmit((v) => mutation.mutate(v))}

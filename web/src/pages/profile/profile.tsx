@@ -62,7 +62,6 @@ export function ProfilePage() {
                 label={getUserRole(user?.role)}
                 color="primary"
                 size="small"
-                sx={{ textTransform: 'uppercase' }}
               />
             </Stack>
             <Stack

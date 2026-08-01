@@ -40,6 +40,8 @@ export function apiErrorMessage(error: unknown): string {
       return (
         data?.message ??
         data?.error ??
+        // @ts-expect-error
+        data?.detail ??
         `Erro ${error.response.status} na requisição.`
       )
     }
