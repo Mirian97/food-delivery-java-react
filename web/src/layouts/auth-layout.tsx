@@ -25,7 +25,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     >
       <Navbar onOpenSidebar={() => setOpen(true)} />
       <CartDrawer />
-      <Box sx={{ flex: 1, display: 'flex' }}>
+      <Box sx={{ flex: 1, display: 'flex', height: '100%' }}>
         <Box
           component="nav"
           sx={{
@@ -34,7 +34,14 @@ export function AuthLayout({ children }: { children: ReactNode }) {
             display: { xs: 'none', md: 'block' },
           }}
         >
-          <Box sx={{ position: 'sticky', top: 64, height: '100%' }}>
+          <Box
+            sx={{
+              position: 'sticky',
+              top: 64,
+              bottom: 0,
+              height: 'calc(100vh - 64px)',
+            }}
+          >
             <Sidebar />
           </Box>
         </Box>
