@@ -36,12 +36,12 @@ public class AuthService {
             throw new BusinessException("E-mail já cadastrado no sistema.");
         }
 
-        User user = authMapper.toUserEntity(request);
+        User user = authMapper.toEntity(request);
         user.setRole(Role.CUSTOMER);
         user.setPassword(passwordEncoder.encode(request.password()));
 
         User savedUser = userRepository.save(user);
-        return authMapper.toUserResponse(savedUser);
+        return UserResponseDto.from(savedUser);
     }
 
     @Transactional(readOnly = true)
@@ -57,6 +57,6 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com e-mail: " + request.email()));
 
         String token = jwtService.generateToken(user);
-        return authMapper.toLoginResponse(user, token);
+        return LoginResponseDto.from(token, user);
     }
 }

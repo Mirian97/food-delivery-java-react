@@ -11,7 +11,6 @@ import com.quispe.food_delivery.common.exception.ResourceNotFoundException;
 import com.quispe.food_delivery.user.dto.UpdateUserDto;
 import com.quispe.food_delivery.user.dto.UserResponseDto;
 import com.quispe.food_delivery.user.entity.User;
-import com.quispe.food_delivery.user.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +20,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
     @Transactional
     public UserResponseDto update(Long id, UpdateUserDto request) {
@@ -52,7 +50,7 @@ public class UserService {
         }
 
         User updatedUser = userRepository.save(user);
-        return userMapper.toResponse(updatedUser);
+        return UserResponseDto.from(updatedUser);
     }
 
     public List<UserResponseDto> findAll(String search) {
@@ -65,7 +63,7 @@ public class UserService {
         }
 
         return users.stream()
-                .map(userMapper::toResponse)
+                .map(UserResponseDto::from)
                 .toList();
     }
 }
