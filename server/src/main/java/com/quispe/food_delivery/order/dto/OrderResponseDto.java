@@ -6,33 +6,21 @@ import java.util.List;
 
 import com.quispe.food_delivery.order.entity.OrderStatus;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record OrderResponseDto(
+    Long id,
+    OrderStatus status,
+    String deliveryAddress,
+    String createdByEmail,
+    List<OrderItemResponseDto> items,
+    BigDecimal totalPrice,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderResponseDto {
-    private Long id;
-    private OrderStatus status;
-    private String deliveryAddress;
-    private String createdByEmail;
-    private List<OrderItemResponseDto> items;
-    private BigDecimal totalPrice;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OrderItemResponseDto {
-        private Long productId;
-        private String productName;
-        private Integer quantity;
-        private BigDecimal unitPrice;
-    }
+    public static record OrderItemResponseDto(
+        Long productId,
+        String productName,
+        Integer quantity,
+        BigDecimal unitPrice
+    ) {}
 }

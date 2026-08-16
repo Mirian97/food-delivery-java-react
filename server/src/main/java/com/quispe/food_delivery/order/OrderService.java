@@ -34,14 +34,14 @@ public class OrderService {
     @Transactional
     public OrderResponseDto create(CreateOrderRequestDto request, User currentUser) {
         Order order = Order.builder()
-                .deliveryAddress(request.getDeliveryAddress())
+                .deliveryAddress(request.deliveryAddress())
                 .createdBy(currentUser)
                 .status(OrderStatus.RECEBIDO)
                 .build();
 
-        for (CreateOrderRequestDto.OrderItemRequestDto itemRequest : request.getItems()) {
-            Product product = productRepository.findById(itemRequest.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + itemRequest.getProductId()));
+        for (CreateOrderRequestDto.OrderItemRequestDto itemRequest : request.items()) {
+            Product product = productRepository.findById(itemRequest.productId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + itemRequest.productId()));
 
             if (!product.isActive()) {
                 throw new BusinessException("O produto '" + product.getName() + "' não está ativo e não pode ser pedido.");
@@ -49,7 +49,7 @@ public class OrderService {
 
             OrderItem orderItem = OrderItem.builder()
                     .product(product)
-                    .quantity(itemRequest.getQuantity())
+                    .quantity(itemRequest.quantity())
                     .unitPrice(product.getPrice())
                     .build();
 
@@ -103,7 +103,7 @@ public class OrderService {
             throw new BusinessException("Não é permitido alterar o status de um pedido CANCELADO.");
         }
 
-        order.setStatus(request.getStatus());
+        order.setStatus(request.status());
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toResponse(updatedOrder);
     }

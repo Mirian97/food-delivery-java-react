@@ -7,31 +7,22 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateOrderRequestDto {
-
+public record CreateOrderRequestDto(
     @NotBlank(message = "O endereço de entrega é obrigatório")
-    private String deliveryAddress;
+    String deliveryAddress,
 
     @NotEmpty(message = "O pedido deve ter pelo menos um item")
     @Valid
-    private List<OrderItemRequestDto> items;
+    List<OrderItemRequestDto> items
+) {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OrderItemRequestDto {
+    public record OrderItemRequestDto(
         @NotNull(message = "O ID do produto é obrigatório")
-        private Long productId;
+        Long productId,
 
         @NotNull(message = "A quantidade é obrigatória")
         @Min(value = 1, message = "A quantidade mínima é 1")
-        private Integer quantity;
-    }
+        Integer quantity
+      ) {}
 }
